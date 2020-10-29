@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Reporte de ventas:</h1>
+<form method="get" action="{% url 'reports:sales_report' %}">
+    <p>Filtrar por rango de fechas: </p
+    <p>Inicio: <input type="date" value='{{start}}' name="start"/></p>
+    <p>Fin: <input type="date" value='{{end}}' name="end"/></p>
+    <p><input type="submit" name="submit" value="submit"/></p>
+</form>
+<table>
+	<thead>
+		<th>
+			Producto
+		</th>
+		<th>
+			Atributo
+		</th>
+		<th>
+			Precio
+		</th>
+		<th>
+			Cantidad vendida
+		</th>
+		<th>
+			Stock
+		</th>
+	</thead>
+	<tbody>
+		{% for r in report %}
+		<tr>
+			<td>
+				{{ r.product__title }}
+			</td>
+			<td>
+				{{ r.attribute|default_if_none:"" }}
+			</td>
+			<td>
+				${{ r.full_unit_price }}
+			</td>
+			<td>
+				{{ r.c }}
+			</td>
+			<td>
+				{{ r.product__available_quantity }}
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

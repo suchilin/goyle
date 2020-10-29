@@ -1,0 +1,86 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Ventas</h1>
+<form method="get" action="{% url 'sales:index' %}">
+    <p>Buscar por id: <input type="text" value='{{filter}}' name="filter"/></p>
+    <p><input type="submit" name="submit" value="submit"/></p>
+</form>
+
+<table>
+	<thead>
+		<th></th>
+		<th>Id</th>
+		<th>Estatus</th>
+		<th>Usuario Comprador</th>
+		<th>Comprador</th>
+		<th>Monto total</th>
+		<th>Total productos</th>
+		<th>Estatus de envio</th>
+		<th>Modo de envio</th>
+		<th>Fecha de venta</th>
+		<th>Fecha de entrega</th>
+		<th>Logistica</th>
+	</thead>
+	<tbody>
+		{% for sale in sales %}
+		<tr>
+			<td>
+				{{ forloop.counter }}
+			</td>
+			<td>
+				{{ sale.ml_id }}
+			</td>
+			<td>
+				{{ sale.status }}
+			</td>
+			<td>
+				{{ sale.buyer.nickname }}
+			</td>
+			<td>
+				{{ sale.buyer }}
+			</td>
+			<td>
+				{{ sale.total_amount }}
+			</td>
+			<td>
+				{{ sale.productsale_set.all.count }}
+			</td>
+			<td>
+				{{ sale.shipping.status }}
+			</td>
+			<td>
+				{{ sale.shipping.mode }}
+			</td>
+			<td>
+				{{ sale.date_created|date:"D d M Y"}}
+			</td>
+			<td>
+				{{ sale.shipping.delivered_date|default_if_none:"" }}
+			</td>
+			<td>
+				{{ sale.shipping.logistic }}
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

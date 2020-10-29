@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Productos</h1>
+<form method="get" action="{% url 'products:index' %}">
+    <p>Filtrar por nombre: <input type="text" value='{{filter}}' name="filter"/></p>
+    <p><input type="submit" name="submit" value="submit"/></p>
+</form>
+
+<table>
+	<thead>
+		<th></th>
+		<th>Categoria</th>
+		<th>Nombre</th>
+		<th>Id MercadoLibre</th>
+		<th>Id Variante</th>
+		<th>Publicacion</th>
+		<th>Atributo</th>
+		<th>Stock</th>
+	</thead>
+	<tbody>
+		{% for product in products %}
+		<tr>
+			<td>{{ forloop.counter }}</td>
+			<td>
+				{{ product.category }}
+			</td>
+			<td>
+				{{ product.name }}
+			</td>
+			<td>
+				{{ product.ml_id }}
+			</td>
+			<td>
+				{{ product.variation_id|default_if_none:"" }}
+			</td>
+			<td>
+				{{ product.title }}
+			</td>
+			<td>
+				{{ product.attributes.0.value_name }}
+			</td>
+			<td>
+				{{ product.available_quantity }}
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
