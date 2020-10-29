@@ -114,10 +114,12 @@ class Command(BaseCommand):
                         product["available_quantity"] = item_details["available_quantity"]
                     else:
                         product["variation_id"] = item["item"]["variation_id"]
-                        variation = next(
-                            x for x in item_details["variations"] if x["id"] == variation_id)
-                        product["inventory_id"] = variation["inventory_id"]
-                        product["available_quantity"] = variation["available_quantity"]
+                        variation = None
+                        for v in item_details["variations"]:
+                            if v["id"] == variation_id:
+                                variation = v
+                        product["inventory_id"] = variation["inventory_id"] if variation else None
+                        product["available_quantity"] = variation["available_quantity"] if variation else 0
                         variation_attributes = item.get(
                             'item', {}).get('variation_attributes')
                     product["attributes"] = variation_attributes if variation_attributes else None
@@ -183,7 +185,7 @@ class Command(BaseCommand):
                     psale.quantity = product.get("quantity_saled", 0)
                     psale.full_unit_price = product.get("full_unit_price", 0)
                     psale.save()
-            print(json_sale)
+            #  print(json_sale)
 
     async def main(self):
         total_pages = self.get_total_pages(self.ayer, self.hoy)
@@ -198,8 +200,8 @@ class Command(BaseCommand):
             if not ventas:
                 print("No hay ventas", ventas)
                 continue
-            await self.save_products(ventas)
             print("Page %s de %s" % (page+1, total_pages))
+            await self.save_products(ventas)
             #  await self.save_products(ventas)
             #  for venta in ventas:
             #      print("ITEM ID:",venta["ml_id"])
