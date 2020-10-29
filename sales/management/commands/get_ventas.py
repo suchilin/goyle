@@ -23,7 +23,7 @@ class Command(BaseCommand):
     def __init__(self):
         client_id = os.environ["GOYLE_ID"]
         client_secret = os.environ["GOYLE_SECRET"]
-        self.ayer = str(date.today()-timedelta(days=5))
+        self.ayer = str(date.today()-timedelta(days=365))
         self.hoy = str(date.today())
         self.mp = mercadopago.MP(client_id, client_secret)
         self.access_token = self.mp.get_access_token()
@@ -90,14 +90,16 @@ class Command(BaseCommand):
                 sale["date_created"] = venta.get("date_created")
                 sale["buyer"] = buyer
                 shipping = {}
-                shipping["id"] = shipping_details["id"]
-                shipping["mode"] = shipping_details["mode"]
-                shipping["status"] = shipping_details.get(
-                    'status', 'Sin status')
-                shipping["delivery_date"] = shipping_details.get(
-                    'status_history', {}).get('date_delivered', '')
-                shipping["logistic"] = shipping_details.get(
-                    'logistic_type', 'No especificado')
+                shipping_id = shipping_details.get("id",None)
+                if shipping_id:
+                    shipping["id"] = shipping_id
+                    shipping["mode"] = shipping_details["mode"]
+                    shipping["status"] = shipping_details.get(
+                        'status', 'Sin status')
+                    shipping["delivery_date"] = shipping_details.get(
+                        'status_history', {}).get('date_delivered', '')
+                    shipping["logistic"] = shipping_details.get(
+                        'logistic_type', 'No especificado')
                 sale["shipping"] = shipping
                 items = []
                 for item in venta['order_items']:
@@ -154,13 +156,15 @@ class Command(BaseCommand):
             venta.status = sale["status"]
             venta.save()
             if sale["shipping"]:
-                shipping, created = Shipping.objects.get_or_create(
-                    ml_id=sale["shipping"]["id"], sale=venta)
-                shipping.mode = sale["shipping"].get("mode")
-                shipping.status = sale["shipping"].get("status")
-                shipping.delivery_date = sale["shipping"].get("delivery_date")
-                shipping.logistic = sale["shipping"].get('logistic')
-                shipping.save()
+                shipping_id = sale["shipping"].get("id")
+                if shipping_id:
+                    shipping, created = Shipping.objects.get_or_create(
+                        ml_id=sale["shipping"]["id"], sale=venta)
+                    shipping.mode = sale["shipping"].get("mode")
+                    shipping.status = sale["shipping"].get("status")
+                    shipping.delivery_date = sale["shipping"].get("delivery_date")
+                    shipping.logistic = sale["shipping"].get('logistic')
+                    shipping.save()
             for product in sale["products"]:
                 category, created = Category.objects.get_or_create(
                     ml_id=product["category_id"])
@@ -190,15 +194,15 @@ class Command(BaseCommand):
 
         ventas = []
         for page in range(total_pages):
-            ventas += await self.get_ventas(self.ayer, self.hoy, page)
+            ventas = await self.get_ventas(self.ayer, self.hoy, page)
             if not ventas:
                 print("No hay ventas", ventas)
                 continue
+            await self.save_products(ventas)
             print("Page %s de %s" % (page+1, total_pages))
             #  await self.save_products(ventas)
             #  for venta in ventas:
             #      print("ITEM ID:",venta["ml_id"])
-        await self.save_products(ventas)
 
     def handle(self, *args, **options):
         asyncio.run(self.main())
