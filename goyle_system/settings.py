@@ -84,13 +84,13 @@ DATABASES = {
 
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
 
-        'NAME': 'goyle',
+        'NAME': 'goyle_ventas',
 
-        'USER': 'postgres',
+        'USER': 'goyle',
 
-        'PASSWORD': 'secretpassword',
+        'PASSWORD': 'GoyleDatabase2020',
 
-        'HOST': '172.17.0.2',
+        'HOST': 'localhost',
 
         'PORT': '5432',
 

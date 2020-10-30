@@ -23,7 +23,7 @@ class Command(BaseCommand):
     def __init__(self):
         client_id = os.environ["GOYLE_ID"]
         client_secret = os.environ["GOYLE_SECRET"]
-        self.ayer = str(date.today()-timedelta(days=365))
+        self.ayer = str(date.today()-timedelta(days=30))
         self.hoy = str(date.today())
         self.mp = mercadopago.MP(client_id, client_secret)
         self.access_token = self.mp.get_access_token()
@@ -189,19 +189,23 @@ class Command(BaseCommand):
 
     async def main(self):
         total_pages = self.get_total_pages(self.ayer, self.hoy)
-        print("HOY: %s\n" % self.hoy)
-        print("AYER %s\n" % self.ayer)
-        print("TOTAL PAGES", total_pages)
+        logfile=open("goyle.log",'a')
+        logfile.write("HOY: %s\n" % self.hoy)
+        logfile.write("AYER %s\n" % self.ayer)
+        logfile.write("TOTAL PAGES %s\n" % total_pages)
+        logfile.close()
         #  if total_pages > 0:
 
         ventas = []
         for page in range(total_pages):
             ventas = await self.get_ventas(self.ayer, self.hoy, page)
+            logfile=open("goyle.log",'a')
             if not ventas:
-                print("No hay ventas", ventas)
+                logfile.write("No hay ventas\n", ventas)
                 continue
-            print("Page %s de %s" % (page+1, total_pages))
+            logfile.write("Page %s de %s\n" % (page+1, total_pages))
             await self.save_products(ventas)
+            logfile.close()
             #  await self.save_products(ventas)
             #  for venta in ventas:
             #      print("ITEM ID:",venta["ml_id"])
