@@ -188,27 +188,32 @@ class Command(BaseCommand):
             #  print(json_sale)
 
     async def main(self):
-        total_pages = self.get_total_pages(self.ayer, self.hoy)
-        logfile=open("goyle.log",'a')
-        logfile.write("HOY: %s\n" % self.hoy)
-        logfile.write("AYER %s\n" % self.ayer)
-        logfile.write("TOTAL PAGES %s\n" % total_pages)
-        logfile.close()
-        #  if total_pages > 0:
-
-        ventas = []
-        for page in range(total_pages):
-            ventas = await self.get_ventas(self.ayer, self.hoy, page)
+        total_days=365
+        tasks=[]
+        for d in range(0,total_days):
+            inicio=str(date.today()-timedelta(days=d))
+            fin=str(date.today()-timedelta(days=d-1))
+            total_pages = self.get_total_pages(inicio,fin)
             logfile=open("goyle.log",'a')
-            if not ventas:
-                logfile.write("No hay ventas\n", ventas)
-                continue
-            logfile.write("Page %s de %s\n" % (page+1, total_pages))
-            await self.save_products(ventas)
+            logfile.write("INICIO: %s\n" % inicio)
+            logfile.write("FIN %s\n" % fin)
+            logfile.write("TOTAL PAGES %s\n" % total_pages)
             logfile.close()
-            #  await self.save_products(ventas)
-            #  for venta in ventas:
-            #      print("ITEM ID:",venta["ml_id"])
+            #  if total_pages > 0:
+
+            ventas = []
+            for page in range(total_pages):
+                ventas = await self.get_ventas(inicio, fin, page)
+                logfile=open("goyle.log",'a')
+                if not ventas:
+                    logfile.write("No hay ventas\n", ventas)
+                    continue
+                logfile.write("Page %s de %s\n" % (page+1, total_pages))
+                await self.save_products(ventas)
+                logfile.close()
+                #  await self.save_products(ventas)
+                #  for venta in ventas:
+                #      print("ITEM ID:",venta["ml_id"])
 
     def handle(self, *args, **options):
         asyncio.run(self.main())
