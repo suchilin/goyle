@@ -8,64 +8,66 @@
     <p><input type="submit" name="submit" value="submit"/></p>
 </form>
 
-<table>
-	<thead>
-		<th></th>
-		<th>Id</th>
-		<th>Estatus</th>
-		<th>Usuario Comprador</th>
-		<th>Comprador</th>
-		<th>Monto total</th>
-		<th>Total productos</th>
-		<th>Estatus de envio</th>
-		<th>Modo de envio</th>
-		<th>Fecha de venta</th>
-		<th>Fecha de entrega</th>
-		<th>Logistica</th>
-	</thead>
-	<tbody>
-		{% for sale in sales %}
-		<tr>
-			<td>
-				{{ forloop.counter }}
-			</td>
-			<td>
-				{{ sale.ml_id }}
-			</td>
-			<td>
-				{{ sale.status }}
-			</td>
-			<td>
-				{{ sale.buyer.nickname }}
-			</td>
-			<td>
-				{{ sale.buyer }}
-			</td>
-			<td>
-				{{ sale.total_amount }}
-			</td>
-			<td>
-				{{ sale.productsale_set.all.count }}
-			</td>
-			<td>
-				{{ sale.shipping.status }}
-			</td>
-			<td>
-				{{ sale.shipping.mode }}
-			</td>
-			<td>
-				{{ sale.date_created|date:"D d M Y"}}
-			</td>
-			<td>
-				{{ sale.shipping.delivered_date|default_if_none:"" }}
-			</td>
-			<td>
-				{{ sale.shipping.logistic }}
-			</td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
+<div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar tableFixHead">
+	<table class="table">
+		<thead class="thead-dark">
+			<th></th>
+			<th class="text-nowrap">Id</th>
+			<th class="text-nowrap">Estatus</th>
+			<th class="text-nowrap">Usuario Comprador</th>
+			<th class="text-nowrap">Comprador</th>
+			<th class="text-nowrap">Monto total</th>
+			<th class="text-nowrap">Total productos</th>
+			<th class="text-nowrap">Estatus de envio</th>
+			<th class="text-nowrap">Modo de envio</th>
+			<th class="text-nowrap">Fecha de venta</th>
+			<th class="text-nowrap">Fecha de entrega</th>
+			<th class="text-nowrap">Logistica</th>
+		</thead>
+		<tbody>
+			{% for sale in sales %}
+			<tr>
+				<td class="text-nowrap">
+					{{ forloop.counter }}
+				</td>
+				<td class="text-nowrap">
+					{{ sale.ml_id }}
+				</td>
+				<td class="text-nowrap">
+					{{ sale.status }}
+				</td>
+				<td class="text-nowrap">
+					{{ sale.buyer.nickname }}
+				</td>
+				<td class="text-nowrap">
+					{{ sale.buyer }}
+				</td>
+				<td class="text-nowrap">
+					{{ sale.total_amount }}
+				</td>
+				<td class="text-nowrap">
+					{{ sale.productsale_set.all.count }}
+				</td>
+				<td class="text-nowrap">
+					{{ sale.shipping.status }}
+				</td>
+				<td class="text-nowrap">
+					{{ sale.shipping.mode }}
+				</td>
+				<td class="text-nowrap">
+					{{ sale.date_created|date:"D d M Y"}}
+				</td>
+				<td class="text-nowrap">
+					{{ sale.shipping.delivered_date|default_if_none:"" }}
+				</td>
+				<td class="text-nowrap">
+					{{ sale.shipping.logistic }}
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
