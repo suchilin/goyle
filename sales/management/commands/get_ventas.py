@@ -188,7 +188,7 @@ class Command(BaseCommand):
             #  print(json_sale)
 
     async def main(self):
-        total_days=365
+        total_days=15
         tasks=[]
         for d in range(0,total_days):
             inicio=str(date.today()-timedelta(days=d))
