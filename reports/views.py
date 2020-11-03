@@ -13,7 +13,7 @@ def sales_report(request):
     ).all().order_by("-only_date","product__title")
     start = request.GET.get("start")
     end = request.GET.get("end")
-    print("START: ",start, "END: ",end)
+    #  print("START: ",start, "END: ",end)
     if start:
         productss = productss.filter(sale__date_created__gte=start)
     if end:

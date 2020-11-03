@@ -31,7 +31,7 @@ def to_mercadolibre(request):
     token = secrets.token_hex()
     mltoken = MLState(token=token)
     mltoken.save()
-    redirect_uri = 'https://auth.mercadolibre.com.mx/authorization?response_type=code&client_id={client_id}&state={state}&redirect_uri=http://localhost:8000/auth/callback'.format(
+    redirect_uri = 'https://auth.mercadolibre.com.mx/authorization?response_type=code&client_id={client_id}&state={state}&redirect_uri=https://goyleventas.suchil.link/auth/callback'.format(
         client_id=os.environ["ML_APP_ID"], state=token)
     return redirect(redirect_uri)
 
